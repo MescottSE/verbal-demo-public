@@ -15,7 +15,7 @@ export const createUser: (
 ) => Promise<User> = async (client, { firstName, lastName, email }, roleConnection) => {
     const existingUser = await client.user.findUnique({ where: { email } });
 
-    if (existingUser || !email) {
+    if (existingUser || !email) { 
         throw new Error(ERROR_EMAIL_IN_USE);
     }
 
@@ -83,13 +83,25 @@ export class UserCrudRouter extends CrudRouter {
     dashboardStats = async (request: express.Request, response: express.Response): Promise<express.Response> => {
         // count all stories
         let storiesLength = 0;
+        let storiesLength30 = 0;
+        let date = new Date();
+
+        date.setMonth(date.getMonth()-1);
+
         const stories = await request.prisma.story.findMany();
+        const stories30 = await request.prisma.story.findMany({where : {createdDate:{ gt: date }}});
+
         if (stories && stories.length > 0) {
             storiesLength = stories.length;
         }
 
+        if (stories30 && stories30.length > 0) {
+            storiesLength30 = stories30.length;
+        }
+
         response.json(<DashboardStats>{
             totalStories: storiesLength,
+            totalStories30: storiesLength30
         });
 
         return response;

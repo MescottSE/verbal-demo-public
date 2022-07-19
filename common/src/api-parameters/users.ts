@@ -10,4 +10,5 @@ export const PasswordValidityChecks = [/[a-z]/, /[A-Z]/, /\d/, /[^A-z\d]/];
 
 export type DashboardStats = {
     totalStories: number;
+    totalStories30: number;
 };
